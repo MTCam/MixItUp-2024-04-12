@@ -1,0 +1,30 @@
+%%
+\node (mirgecom) at (306.3bp,522.0bp) [draw,ellipse,c_mirgecom] {mirgecom};
+  \node (meshmode) at (198.3bp,378.0bp) [draw,ellipse,c_meshmode] {meshmode};
+  \node (grudge) at (275.3bp,450.0bp) [draw,ellipse,c_grudge] {grudge};
+  \node (loopy) at (300.3bp,162.0bp) [draw,ellipse,c_loopy] {loopy};
+  \node (pytato) at (398.3bp,234.0bp) [draw,ellipse,c_pytato] {pytato};
+  \node (pyopencl) at (82.3bp,90.0bp) [draw,ellipse,c_pyopencl] {pyopencl};
+  \node (modepy) at (194.3bp,306.0bp) [draw,ellipse,c_modepy] {modepy};
+  \node (arraycontext) at (82.3bp,306.0bp) [draw,ellipse,c_arraycontext] {arraycontext};
+  \node (pymbolic) at (339.3bp,90.0bp) [draw,ellipse,c_pymbolic] {pymbolic};
+  \node (pocl) at (82.3bp,18.0bp) [draw,ellipse,c_pocl] {pocl};
+  \draw [->] (mirgecom) ..controls (263.07bp,497.84bp) and (243.93bp,484.43bp)  .. (231.3bp,468.0bp) .. controls (217.23bp,449.7bp) and (208.68bp,424.78bp)  .. (meshmode);
+  \draw [->] (mirgecom) ..controls (295.22bp,495.97bp) and (290.85bp,486.12bp)  .. (grudge);
+  \draw [->] (mirgecom) ..controls (322.13bp,477.36bp) and (338.3bp,424.99bp)  .. (338.3bp,379.0bp) .. controls (338.3bp,379.0bp) and (338.3bp,379.0bp)  .. (338.3bp,305.0bp) .. controls (338.3bp,263.41bp) and (322.9bp,217.22bp)  .. (loopy);
+  \draw [->] (mirgecom) ..controls (333.95bp,495.26bp) and (345.45bp,482.01bp)  .. (352.3bp,468.0bp) .. controls (386.02bp,399.05bp) and (395.02bp,307.18bp)  .. (pytato);
+  \draw [->] (meshmode) ..controls (224.34bp,350.64bp) and (235.59bp,337.39bp)  .. (243.3bp,324.0bp) .. controls (256.77bp,300.58bp) and (279.94bp,228.93bp)  .. (loopy);
+  \draw [->] (meshmode) ..controls (105.37bp,361.51bp) and (34.495bp,345.65bp)  .. (18.3bp,324.0bp) .. controls (-29.855bp,259.62bp) and (29.958bp,161.05bp)  .. (pyopencl);
+  \draw [->] (meshmode) ..controls (196.87bp,351.98bp) and (196.34bp,342.71bp)  .. (modepy);
+  \draw [->] (meshmode) ..controls (156.9bp,352.02bp) and (134.42bp,338.45bp)  .. (arraycontext);
+  \draw [->] (grudge) ..controls (248.31bp,424.47bp) and (234.95bp,412.31bp)  .. (meshmode);
+  \draw [->] (grudge) ..controls (280.96bp,384.29bp) and (292.77bp,249.18bp)  .. (loopy);
+  \draw [->] (loopy) ..controls (237.05bp,140.69bp) and (169.33bp,118.95bp)  .. (pyopencl);
+  \draw [->] (loopy) ..controls (314.0bp,136.4bp) and (319.79bp,126.02bp)  .. (pymbolic);
+  \draw [->] (pyopencl) ..controls (82.3bp,63.983bp) and (82.3bp,54.712bp)  .. (pocl);
+  \draw [->] (arraycontext) ..controls (146.51bp,263.17bp) and (228.67bp,209.66bp)  .. (loopy);
+  \draw [->] (arraycontext) ..controls (82.3bp,250.83bp) and (82.3bp,163.18bp)  .. (pyopencl);
+  \draw [->] (arraycontext) ..controls (130.09bp,291.77bp) and (137.92bp,289.77bp)  .. (145.3bp,288.0bp) .. controls (219.86bp,270.15bp) and (307.59bp,252.52bp)  .. (pytato);
+  \draw [->] (pytato) ..controls (364.12bp,208.58bp) and (343.5bp,193.86bp)  .. (loopy);
+  \draw [->] (pytato) ..controls (381.14bp,191.71bp) and (362.22bp,146.17bp)  .. (pymbolic);
+%

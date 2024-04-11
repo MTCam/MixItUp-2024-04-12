@@ -1,0 +1,655 @@
+% JBF NOTES
+
+
+% The two main things to convey seem to be the following.  I'm also trying you cast the best tone with these comments.
+
+
+% I.  Create a picture that (1) verification is a priority, (2) that we're doing it well and comprehensively, and (3) list any holes currently with plans to close them.
+
+
+% II.  Even if imperfect, we will have a proof of concept of MIRGE at scale (near whole machine) --- this is a major contribution, and requires are PSAAP center activity to show.  Our "new" approach is high risk, high reward and we have learned lessons and lowered risk going forward for others (and outselves).
+
+% LukeO rip-off
+\tikzstyle{c_mirgecom}   = []
+\tikzstyle{c_meshmode}   = []
+\tikzstyle{c_grudge}     = []
+\tikzstyle{c_loopy}      = []
+\tikzstyle{c_pytato}     = []
+\tikzstyle{c_pyopencl}   = []
+\tikzstyle{c_modepy}     = []
+\tikzstyle{c_pymbolic}   = []
+\tikzstyle{c_pocl}       = []
+\tikzstyle{c_arraycontext} = []
+\newcommand{\softwaredeps}{
+  \tikzstyle{every path} = [line width=0.3pt,black!70]
+  \tikzstyle{every node} = [scale=1.5,IllinoisBlue, line width=1pt]
+  \begin{tikzpicture}[>=latex',line join=bevel,scale=0.34,
+                      transform shape]
+      \input{./Figures/mtc/software-all.tikz}
+  \end{tikzpicture}
+}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{kkcodestyle}{
+    language=python,
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2,
+    escapeinside=@@
+}
+
+%\newcommand{\softwaredeps}{
+%  \input{./Figures/software.tikz}
+%}
+
+\begin{frame}\frametitle{Outline}
+\begin{minipage}[T]{0.45\textwidth}
+  \begin{itemize}
+    \setlength{\itemsep}{0.2in}
+    \item Current Performance 
+    \item Performance Challenge
+    \item Next Steps
+  \end{itemize}
+\end{minipage}
+\hfill
+\begin{minipage}[T]{0.45\textwidth}
+  \centering
+  \tikzstyle{c_mirgecom}=[draw=myOrange, line width=0.5mm]
+  \softwaredeps%
+\end{minipage}
+  \url{https://github.com/illinois-ceesd/mirgecom/}
+\end{frame}
+
+
+\begin{frame}\frametitle{Performance Monitoring on Lassen}
+\begin{center}
+https://github.com/illinois-ceesd/timing\\
+%\includegraphics[width=.6\textwidth]{Figures/mtc/nozzle-lazy-full.pdf}
+\includegraphics[width=.6\textwidth]{Figures/mtc/big_nozzle_timing_history.pdf}
+\end{center}
+\end{frame}
+
+
+\begin{frame}\frametitle{Recent: Persistent Caching of Compiled Kernels}
+\begin{center}
+  \includegraphics[width=.7\textwidth]{Figures/mtc/y3-recent-cached_1.pdf}
+\end{center}
+\end{frame}
+
+
+\begin{frame}\frametitle{Lifetime Performance Monitoring}
+\centering
+\includegraphics[width=.8\textwidth]{Figures/mtc/gas-only-perf-eager.pdf}
+\end{frame}
+
+\begin{frame}\frametitle{Lifetime Performance Monitoring}
+\centering
+\includegraphics[width=.8\textwidth]{Figures/mtc/gas-only-perf.pdf}
+\end{frame}
+
+\begin{frame}\frametitle{Lassen DATs for Testing at Scale}
+\begin{center}
+New: Actual prediction physics at scale \prj{\tiny}{M.~Anderson}
+\end{center}
+  \begin{itemize}
+  \item Dedicated Application Time (DAT) last Fall
+  \item Large portion of Lassen:
+    \begin{itemize}
+    \item 600(ish) available nodes
+    \item 4$\times$NVIDIA Volta (V100) GPUs / node
+    \item 256GB of host RAM, 16GB per GPU, Unified mem
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}\frametitle{Scalability Data from Lassen DAT}
+    \begin{columns}[T]  % [T] is for top vertical alignment
+
+    % Left Column
+    \begin{column}{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{Figures/mtc/RHSCompileTimes_2048.pdf}
+    \end{column}
+    
+    % Right Column
+    \begin{column}{0.5\textwidth}
+    \centering
+      \includegraphics[width=\textwidth]{Figures/mtc/SimulationStepTimes_2048.pdf}
+    \end{column}
+
+  \end{columns}
+\end{frame}
+
+\begin{frame}
+    \centering
+    \Large
+    Challenges To Performance
+\end{frame}
+
+\begin{frame}\frametitle{Recall: DAG Splat Effect}
+\vspace{5pt}
+  \begin{minipage}{0.49\textwidth}		
+    \begin{itemize}
+    \item Unexpected DAG scaling vs. MPI ranks
+    \item DAG \textit{splat}: function DAG inlining:
+    \begin{itemize}
+    \item Flux: BCs \& Interior boundaries (IEB)
+    \item Temperature: Newton iterations
+    %\item Function \texttt{make\_fluid\_state} (MFS)
+    %\item Dependent vars (DV): Newton iters
+    %\item BCs \& Interior boundaries (IEB)
+    \end{itemize}
+    \item 1D part: Particle board $\rightarrow$ pancakes
+    \end{itemize}
+    \begin{center}
+    \includegraphics[width=.8\textwidth]{Figures/mtc/combozzle_weak_bad_partitioning.png}
+    \end{center}
+  \end{minipage}
+  \begin{minipage}{0.49\textwidth}
+    %\begin{figure}
+      \centering
+      \includegraphics[width=.8\textwidth]{Figures/mtc/MetisTo1D.png} \\
+      \vspace{10pt}
+    \includegraphics[width=.8\textwidth]{Figures/mtc/y3-prediction_weak_scaling.pdf}
+    %\end{figure}		
+  \end{minipage}
+\end{frame}
+
+
+\begin{frame}\frametitle{DAG Splat Rises Again: No Surprises}
+    \begin{columns}[T]  % [T] is for top vertical alignment
+    % Left Column
+    \begin{column}{0.5\textwidth}
+      % Top left: Text
+      \begin{itemize}
+      \item DAG Splat is the culprit for full machine scaling fail
+      \item 1D Partitioning fails spectacularly at scale
+      \item Pancakes $\rightarrow$ waffles
+      \item Material-material interfaces contribute significantly to DAG
+      \end{itemize}
+      \vspace{20pt}
+      \hspace{20pt}
+      \includegraphics[width=.7\textwidth]{Figures/mtc/compile_times_dag_nodes.png}
+    \end{column}
+    
+    % Right Column
+    \begin{column}{0.5\textwidth}
+      \vspace{-15pt}
+      \hspace{20pt}
+      % Top right: Startup Times
+      \includegraphics[width=.4\textwidth]{Figures/mtc/BadPartitioning2.png}
+      \includegraphics[width=.4\textwidth]{Figures/mtc/BadPartitioning.png}
+      % Bottom right: Simulation Step Times
+      \vfill
+      \vspace{10pt}
+      \hspace{20pt}
+      \includegraphics[width=.7\textwidth]{Figures/mtc/dag_nodes_rank_nbrs.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}\frametitle{What Makes Prediction DAGs So Big?}
+\begin{columns}[T, onlytextwidth] % Aligns contents at the top
+    \begin{column}{0.48\textwidth}
+        \begin{itemize}
+          \item Which features cause DAG explosion?
+          \begin{itemize}
+          \item Dependent var (DV) evals are expensive (mixtures)
+          \item \texttt{make\_fluid\_state} (MFS): many DV evals (limiting)
+          \end{itemize}
+          \item Compile times grow faster than the DAG
+        \end{itemize}
+        \vspace{10pt}
+        \centering
+        %\includegraphics[width=.8\textwidth]{Figures/mtc/prediction_dag_table.png}
+        \includegraphics[width=\textwidth]{Figures/mtc/prediction_features_dag.pdf}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+        \centering
+        \begin{tabularx}{\textwidth}{|X|X|X|X|X|}
+            \hline
+            \textbf{Gas} & \textbf{Vol} & \textbf{BC} & \textbf{IEB} & \textbf{Total} \\ \hline
+            Single & 290 & 486 & 697 & 1473 \\ \hline
+            Mixture & 1591 & 2500 & 3060 & 7151 \\ \hline
+        \end{tabularx}        
+        \vspace{5pt}
+        $N_{\text{dag}} = 1591 + 2500(N_{\text{bc}}) + 3060(1 + N_{\text{pb}})$\\
+        \vfill
+        \vspace{20pt}
+        \includegraphics[width=\textwidth]{Figures/mtc/compile_dag_scaling.pdf}
+    \end{column}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}
+    \centering
+    \Large
+    Next Steps
+\end{frame}
+
+\begin{frame}\frametitle{Summary and Next Steps}
+\begin{itemize}
+\item \mirgecom{} has prediction-supporting performance (poised to deliver more)
+\item Next focus: understanding and improving \mirgecom{} performance
+\end{itemize}
+\begin{center}
+Next steps
+\end{center}
+\begin{multicols}{2}
+\begin{itemize}
+\item Understanding and improving performance:
+\begin{itemize}
+\item Instrumentation (Mem \& Tags) \prj{\tiny}{M.~Diener}
+\item Code-to-kernel correspondence improvements: \prj{\tiny}{M.~Diener}
+\item Auto-tuning, flop monitoring \prj{\tiny}{Nick Christensen}
+\item DAG Splat \prj{\tiny}{M. Smith, Kl\"ockner}
+% \item Performance:
+%\begin{itemize}
+\item More platforms: Tioga, Delta, ...
+\item Modeling and benchmarks (bake-off)
+%\end{itemize}
+\end{itemize}
+\columnbreak
+\item Imminent enhancements:
+\begin{itemize}
+\item More verification: mixture and boundary conditions
+\item Workflow management: \textit{Parsl} \prj{\tiny}{D.~Friedel}
+  \begin{itemize}
+  \item For interplatform testing \& timing
+  \item UQ \prj{\tiny}{K.~Tang}
+  \item Prediction
+  \end{itemize}
+\item Tensor product elements (Hexes) \prj{\tiny}{Addison Alvey-Blanco, M.~Anderson, T.~Ricciardi}
+%\item M-to-N restart (done!)
+\end{itemize}
+\end{itemize}
+\end{multicols}
+\end{frame}
+
+% NO
+%\input{../ceesd-acknowledgement.tex}
+
+%\begin{frame}\frametitle{Symbolic Infrastructure: Fluid Domain Example}
+%  \begin{center}
+%  %Evolution equation:
+%  Compressible Navier--Stokes for reactive mixtures:
+%  \begin{equation*}
+%    \frac{\partial\mathbf{Q}}{\partial{t}} + \nabla \cdot (\mathbf{F}^I - \mathbf{F}^V) - \mathbf{S} = 0
+%  \end{equation*}
+%  % With chemistry source terms:
+%  % \begin{equation*}
+%  %  \mathbf{S} = [ 0, 0, 0, 0, 0, W_k\dot{\omega_k} ]
+%  %\end{equation*}
+%    Where state vector $\mathbf{Q}$, fluxes $\mathbf{F}^I$, $\mathbf{F}^V$ , and sources $\mathbf{S}$ are given by:
+% \begin{equation*}
+%      \begin{bmatrix}
+%        \rho\\\rho{E}\\\rho\vec{v}\\\rho{Y}_\alpha\end{bmatrix},\quad
+%      \begin{bmatrix} \rho\vec{v}\\(\rho{E} +
+%        p)\vec{v}\\\rho(\vec{v} \otimes \vec{v}) +
+%        p\delta_{ij}\\\rho{Y}_\alpha\vec{v}\end{bmatrix}, \quad
+%       \begin{bmatrix} 0\\(\mathbf{\tau} \cdot \vec{v} - \mathbf{q})\\\mathbf{\tau}\\-\mathbf{J}_\alpha\end{bmatrix},\quad
+%       \begin{bmatrix} 0\\0\\0\\W_\alpha\dot{\omega}_\alpha\end{bmatrix}
+% \end{equation*}
+% $\tau = \mu\left(\nabla\vec{v} + (\nabla\vec{v})^T\right) + \left(\mu_b - \frac{2\mu}{3}\right)\left(\nabla \cdot \vec{v}\righ%t)$\\
+%\vspace{5pt}
+%$\mathbf{J}_\alpha = -\rho D_{(\alpha)} \nabla(Y_\alpha)$ \quad and \quad $\mathbf{q} = -\kappa\nabla{T} + h_\alpha\mathbf{J}_\%alpha$\\
+%\vspace{10pt}
+%    The mixture gas model (EOS) provides $\rightarrow~~(p,T,e,\mu,\kappa,D_{\alpha}, \omega_\alpha, h_\alpha)(\mathbf{Q})$
+%  \end{center}
+%  \begin{tikzpicture}[remember picture, overlay]
+%    \fill <2> [fill=white, opacity=0.8] (current page.south west) + (0.5,0.5) rectangle (12.5,7.5);
+%    \node <2> [inner sep=0pt] at (current page.center) {
+%      \includegraphics[width=.5\textwidth]{Figures/mtc/SymbolicInfrastructureCode.png}
+%    };
+%  \end{tikzpicture}
+%\end{frame}
+%
+%\begin{frame}\frametitle{Component Testing With Symbolic Infrastructure}
+%% \center{What's it good for?}
+%\begin{itemize}
+%\item Fluid component verification testing
+%\item Specify analytic test functions and 
+%\item Evaluate convergence of MIRGE components to exact/analytic solution
+%\end{itemize}
+%\begin{center}
+%  \includegraphics[width=.6\textwidth]{Figures/mtc/ComponentVerifCode.png}
+%\end{center}
+%\begin{itemize}
+%\vspace{-10pt}
+%\item and ... method of manufactured solutions (MMS)
+%\end{itemize}
+%\end{frame}
+
+
+%\begin{frame}\frametitle{Monitoring Daily Y3 Tests on Lassen}
+%\begin{minipage}[t][0.3\textheight][t]{\textwidth}
+%\begin{center}
+%https://github.com/illinois-ceesd/timing
+%\end{center}
+%\begin{multicols}{2}
+%\begin{itemize}
+%\item Data on key capabilities collected nightly
+%\item Intended to track performance vs. code/features
+%\item $\Delta$'s indicate change in performance
+%\columnbreak
+%\item New this cycle:
+%\begin{itemize}
+%\item Multi-case/comparitive plotting
+%\item Tracking parallel cases
+%\end{itemize}
+%\end{itemize}
+%\end{multicols}
+%\end{minipage}\vfill
+%\begin{center}
+%  % \includegraphics[width=.8\textwidth]{Figures/mtc/y3-prediction-parallel-20230405.pdf}
+%  \includegraphics[width=.8\textwidth]{Figures/mtc/parallel_history_2nodes.pdf}
+%\end{center}
+%\end{frame}
+
+%\begin{frame}\frametitle{CNS Verification with MMS}
+%  \begin{multicols}{2}
+%  \begin{itemize}
+%  \item Integrated MMS: Roy Solution
+%  \item 2,3 dimensions, sub/super-sonic
+%  \item Exact boundaries
+%  \item Exercises all CNS equations (single gas)
+%  \end{itemize}
+%  \begin{center}
+%  \vspace*{-5pt}
+%  \tiny{Roy MMS components}
+%  \includegraphics[width=.4\textwidth]{Figures/mtc/RoySoln.png}
+%  \end{center}
+%  \columnbreak
+%  \vspace*{-35pt}
+%  \begin{center}
+%  \tiny{Pressure contours for 3D subsonic Roy MMS.}
+%  \includegraphics[width=.3\textwidth]{Figures/mtc/RoyPressure3D.png}\\
+%  \vspace*{10pt}
+%  \includegraphics[width=.35\textwidth]{Figures/mtc/roy_convergence.pdf}
+%  \end{center}
+%  \end{multicols}
+%  \begin{center}
+%  \vspace*{-10pt}
+%  \begin{minipage}{.8\textwidth}
+%  \paper{\sPI{C.~Roy, T.~Smith, and C.~Ober}, ``Verification of a Compressible CFD Code using the Method of Manufactured Solutions,'' \textit{AIAA} Paper 2002-3110 (2002)}
+%  \end{minipage}
+%  \end{center}
+%\end{frame}
+
+%\begin{frame}\frametitle{Thermochemistry Verification in \mirgecom}
+%\begin{center}
+% Autoignition co-verification
+%\end{center}
+%\begin{itemize}
+%   \item Ethylene/air mixture $(1500\mathtt{K}, \rho=\mathtt{const})$
+%   \item \pyrometheus-predicted profiles match \textit{Cantera}
+%   \item \pyrometheus{} with implicit time integration with \textit{CVODE}
+%   \item \mirgecom{} with RK4, inviscid, quiescent
+%\end{itemize}
+%\begin{multicols}{2}
+%    \includegraphics[width=.4\textwidth]{Figures/mtc/autoignition_rates.pdf}\\
+%    \columnbreak
+%    \includegraphics[width=.4\textwidth]{Figures/mtc/autoignition_temperature.pdf}
+%  \end{multicols}
+%\end{frame}
+
+%\begin{frame}\frametitle{Performance Monitoring on Lassen}
+%\begin{minipage}[t][0.3\textheight][t]{\textwidth}
+%\begin{center}
+%https://github.com/illinois-ceesd/timing
+%\end{center}
+%\begin{multicols}{2}
+%\begin{itemize}
+%\item Data on key capabilities collected nightly
+%\item Intended to track performance vs. code/features
+%\item $\Delta$'s indicate change in performance
+%\columnbreak
+%\item New this cycle:
+%\begin{itemize}
+%\item Multi-case/comparitive plotting
+%\item Tracking parallel cases
+%\end{itemize}
+%\end{itemize}
+%\end{multicols}
+%\end{minipage}\vfill
+%\begin{center}
+%  \includegraphics[width=.8\textwidth]{Figures/mtc/multicase_step.pdf}
+%\end{center}
+%\end{frame}
+
+%\begin{frame}\frametitle{Performance Monitoring on Lassen}
+%\begin{minipage}[t][0.3\textheight][t]{\textwidth}
+%\begin{center}
+%https://github.com/illinois-ceesd/timing
+%\end{center}
+%\begin{multicols}{2}
+%\begin{itemize}
+%\item Data on key capabilities collected nightly
+%\item Intended to track performance vs. code/features
+%\item $\Delta$'s indicate change in performance
+%\columnbreak
+%\item New this cycle:
+%\begin{itemize}
+%\item Multi-case/comparitive plotting
+%\item Tracking parallel cases
+%\end{itemize}
+%\end{itemize}
+%\end{multicols}
+%\end{minipage}\vfill
+%\begin{center}
+%  %\includegraphics[width=.8\textwidth]{Figures/mtc/prediction-scaling-tracking.pdf}
+%  \includegraphics[width=.8\textwidth]{Figures/mtc/parallel_history_2nodes.pdf}
+%\end{center}
+%\end{frame}
+
+
+%\begin{frame}\frametitle{Performance \& Scalability - Mesh Scale Testing}
+%\begin{minipage}[t][0.45\textheight][t]{\textwidth}
+%\begin{center}
+%New: prediction-enabling performance
+%\end{center}
+%\begin{multicols}{2}
+%  \begin{itemize}\setlength{\itemsep}{0.02in}
+%  \item Linear with number of elements
+%  \item Small problems are expensive (performance floor, enqueue times)
+%  \item Should strong scale in linear regime
+%  \end{itemize}
+%  \columnbreak
+%  \begin{itemize}\setlength{\itemsep}{0.02in}
+%  \item Do not exceed device memory
+%    \begin{itemize}
+%    \item OOM: Resolved SVM/Unified mem
+%    \item Acute performance drag
+%    \end{itemize}
+%  \item Mem growth: garbage collection \prj{\tiny}{M.~Diener}
+%  %\item Memory growth during stepping eventually leads to OOM
+%  %\item OOM errors resolved through SVM/Unified memory % \prj\tiny{07c, M.~Diener}
+%  %\item Exceeding device mem now spills over (expensively) to host mem
+%  %\item Mem growth: resolved through garbage collection
+%  \end{itemize}
+%%\item Absolute performance could be better
+%%\item Recent focus: memory growth
+%%\end{itemize}
+%\end{multicols}
+%\end{minipage}
+%\vfill
+%\vspace{-30pt}
+%\begin{minipage}[t][0.45\textheight][t]{\textwidth}
+%\centering
+%%Grid Scaling\\
+%%\end{center}
+%%\begin{center}
+%\includegraphics[width=.4\textwidth]{Figures/mtc/combozzle_gridscale.pdf}\hspace{30pt}
+%\includegraphics[width=.4\textwidth]{Figures/mtc/comboz_gridscale_svm.png}
+%\end{minipage}
+%\end{frame}
+
+%\item Computational performance: Speed or FLOPS
+%% VS. the machine itself, vs. expectation
+%\item Parallel performance: Scalability or efficiency
+%\begin{itemize}
+%\item Strong scaling: Fixed problem size, scaling resources
+%\item Weak scaling: Fixed work/resource, scaling problem size with resource
+%\item Mesh scaling: Scaling work, fixed resource
+%\end{itemize}
+%\item I/O and memory performance: Bandwidth, bytes/second
+%\item Cost performance
+%\begin{itemize}
+%\item Energy efficiency
+%\item Total time to solution (TTS)
+%\item FLOPS/Fidelity
+%\item Usability/Productivity
+%\end{itemize}
+%\item Why should we care about scalability? (enables prediction!)
+%\begin{itemize}
+%\item Weak scaling out to prediction-scale
+%\item Versatility, portability, and resource options
+%\end{itemize}
+
+%\begin{frame}\frametitle{Recall: DAG Splat Effect}
+%  \begin{minipage}{0.45\textwidth}		
+%    \begin{itemize}
+%    \item Fluid-only prediction-like physics (no wall model, boundaries)
+%    \item 3D, periodic, 3rd order elements
+%    \item Weak scaling with 48k elements/GPU (1 rank/GPU)
+%    \end{itemize}
+%    \begin{center}
+%    \includegraphics[width=.8\textwidth]{Figures/mtc/combozzle_weak_bad_partitioning.png}
+%    \end{center}
+%  \end{minipage}
+%  \begin{minipage}{0.5\textwidth}
+%    \begin{figure}
+%      \centering
+%      \includegraphics[width=.6\textwidth]{Figures/mtc/dag_scaling.pdf} \\
+%      \vspace{2pt}
+%      \begin{itemize}
+%      \item Anomalous behavior > 32 GPU
+%      \item Surprising DAG scaling
+%      \item DAG splat (function DAG inlining):
+%      \begin{itemize}
+%      \item Flux \& DV DAG at each boundary; BCs and inter-element (IEB)
+%      \item Function \texttt{make\_fluid\_state} (MFS): Limiting, DV
+%      \item Mixture temperature update DAG at every Newton iteration
+%      \end{itemize}
+%      \end{itemize}
+%    \end{figure}		
+%  \end{minipage}
+%\end{frame}
+
+%\begin{frame}\frametitle{Recall: Addressing DAG Splat}
+%  \begin{minipage}{0.45\textwidth}		
+%  %\vspace{10pt}
+%    \begin{itemize}
+%    \item DAG splat mitigation:
+%    \begin{itemize}
+%    \item 1D part; particle board $\rightarrow$ pancakes
+%    \item Unlocks prediction-scale: 25M elems (6B DOFs)/512 GPUs
+%    \end{itemize}
+%    \item DAG splat solutions:
+%    \begin{itemize}
+%    \item Application: refactor MFS 
+%    \item Infrastructure: function outlining \prj{\tiny}{M.~Smith}
+%    \end{itemize}
+%    \end{itemize}
+%    \begin{center}
+%    \includegraphics[width=.8\textwidth]{Figures/mtc/y3-prediction_weak_scaling.pdf}
+%    \end{center}
+%  \end{minipage}
+%  \begin{minipage}{0.5\textwidth}
+%    \begin{figure}
+%      \centering
+%      \includegraphics[width=.8\textwidth]{Figures/mtc/MetisTo1D.png} \\
+%      \vspace{10pt}
+%      \includegraphics[width=.8\textwidth]{Figures/mtc/combozzle_strong_scaling2.pdf}
+%    \end{figure}		
+%  \end{minipage}
+%\end{frame}
+
+%\begin{frame}\frametitle{DAG Splat Effect}
+%\begin{minipage}[t][0.4\textheight][t]{\textwidth}
+%\begin{center}
+%New: prediction-enabling performance
+%\end{center}
+%\begin{multicols}{2}
+%\begin{itemize}
+%\item DAG Splat: DAG for each boundary
+%\item Limits weak scaling - DAG for each neighbor
+%\columnbreak
+%\item Mitigation: Metis $\to$ 1D decomp
+%\item Real fix: Function calls in the DAG (aka function outlining)
+%\end{itemize}
+%\end{multicols}
+%\end{minipage}\vfill
+%\vspace{-20pt}
+%\begin{minipage}[t][0.4\textheight][t]{\textwidth}
+%\centering
+%\includegraphics[width=.4\textwidth]{Figures/mtc/combozzle_weak_bad_partitioning.png}\hspace{30pt}
+%\includegraphics[width=.4\textwidth]{Figures/mtc/combozzle_weak_sliced_partitioning.png}
+%\end{minipage}
+%\end{frame}
+
+%\begin{frame}\frametitle{DAG Splat Mitigation}
+%\begin{minipage}[t][0.4\textheight][t]{\textwidth}
+%\begin{center}
+%New: prediction-enabling performance
+%\end{center}
+%\begin{multicols}{2}
+%\begin{itemize}
+%\item DAG Splat: DAG for each boundary
+%\item Limits weak scaling - DAG for each neighbor
+%\columnbreak
+%\item Mitigation: Metis $\to$ 1D decomp
+%\item Real fix: Function calls in the DAG (a.k.a. outlining)   %\prj\tiny{Kaushik Kulkarni}
+%\end{itemize}
+%\end{multicols}
+%\end{minipage}\vfill
+%%\vspace{-100pt}
+%\begin{minipage}[t][0.4\textheight][t]{\textwidth}
+%\centering
+%%\includegraphics[width=.9\textwidth]{Figures/mtc/1dpart_bal.png}\\
+%\includegraphics[width=.9\textwidth]{Figures/mtc/1dpartshiny.png}\\
+%%\vspace{-50pt}
+%\begin{center}
+%Y2 Domain Decomposition
+%\end{center}
+%\end{minipage}
+%\end{frame}
+
+%\begin{frame}\frametitle{Scaling with 1D Partitioning}
+%\begin{minipage}[t][0.4\textheight][t]{\textwidth}
+%\begin{center}
+%New: prediction-enabling performance
+%\end{center}
+%\begin{multicols}{2}
+%\begin{itemize}
+%\item DAG Splat: DAG for each boundary
+%\item Limits weak scaling - DAG for each neighbor
+%\columnbreak
+%\item Mitigation: Metis vs. 1D decomp
+%\item Real fix: Function calls in the DAG (a.k.a. outlining)  \prj\tiny{M.~Smith}% \prj\tiny{Kaushik Kulkarni}
+%\end{itemize}
+%\end{multicols}
+%\end{minipage}\vfill
+%\vspace{-20pt}
+%\begin{minipage}[t][0.4\textheight][t]{\textwidth}
+%\centering
+%%\includegraphics[width=.48\textwidth]{Figures/mtc/y2ks3d_weak.png}
+%\includegraphics[width=.48\textwidth]{Figures/mtc/y2-prediction_weak_scaling.pdf}
+%\includegraphics[width=.48\textwidth]{Figures/mtc/y3-prediction_weak_scaling.pdf}
+%\end{minipage}
+%\end{frame}

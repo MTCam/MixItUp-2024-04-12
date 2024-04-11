@@ -1,0 +1,72 @@
+{'font.size': 14, 'font.weight': 'normal', 'axes.titleweight': 'normal', 'axes.labelweight': 'normal'})
+
+# Function to plot performance improvement over time
+def plot_performance_corrected(df, title, include_eager=True):
+        if not include_eager:
+                    df = df[df["Type"] != "eager"]
+
+                        x = range(len(df))  # Define x based on the current df length
+                            fig, ax1 = plt.subplots(figsize=(14, 8))
+                                width = 0.35  # Bar width
+
+                                    # Dual y-axes setup
+                                        ax2 = ax1.twinx()
+                                            ax1.bar([p - width/2 for p in x], df["CNS(2s)"], width, label='CNS(2s)', color='skyblue')
+                                                ax1.bar([p + width/2 for p in x], df["Mix"], width, label='Mix', color='orange')
+                                                    ax2.plot(x, df["TTS"], label='TTS (days)', color='green', marker='o', linestyle='-', linewidth=2)
+
+                                                        # Axis labels and tick formatting
+                                                            ax1.set_xlabel("Date", fontsize=16)
+                                                                ax1.set_ylabel("Seconds", fontsize=16, color='black')
+                                                                    ax2.set_ylabel("Days", fontsize=16, color='green')
+                                                                        ax1.set_xticks(x)
+                                                                            ax1.set_xticklabels([f"{row.Date.strftime('%Y-%m-%d')}\n({row.Type})" for index, row in df.iterrows()], fontsize=12)
+
+                                                                                # Annotations and legend configuration
+                                                                                    for i, (index, row) in enumerate(df.iterrows()):
+                                                                                                ax1.annotate(row["Array Context Type"].split("(")[0], (i, max(row["CNS(2s)"], row["Mix"]) + 10), ha='center', va='bottom', fontsize=10)
+                                                                                                    ax1.legend(fontsize=12)
+                                                                                                        ax2.legend(fontsize=12, loc='upper left')
+                                                                                                            ax1.set_title(title, fontsize=18)
+
+                                                                                                                plt.tight_layout()
+                                                                                                                    plt.show()
+
+                                                                                                                    # Plotting both versions of the charts
+                                                                                                                    plot_performance_corrected(df_updated, "Gas-Only ACTII Flowthrough with All Data Points", include_eager=True)
+                                                                                                                    plot_performance_corrected(df_updated, "Gas-Only ACTII Flowthrough without Eager Context", include_eager=False)
+                                                                                                                    ~# Correcting the issue with variable scope and ensuring both plots are generated correctly
+
+def plot_performance_over_time(df, title, include_eager=True):
+    fig, ax1 = plt.subplots(figsize=(14, 8))
+
+    if not include_eager:
+        df = df[df["Type"] != "eager"]
+    
+    x = range(len(df))  # Define x based on the current df length
+
+    ax2 = ax1.twinx()
+    ax1.bar([p - width/2 for p in x], df["CNS(2s)"], width, label='CNS(2s)', color='skyblue')
+    ax1.bar([p + width/2 for p in x], df["Mix"], width, label='Mix', color='orange')
+    ax2.plot(x, df["TTS"], label='TTS (days)', color='green', marker='o', linestyle='-', linewidth=2)
+
+    ax1.set_xlabel("Date", fontsize=16)
+    ax1.set_ylabel("Seconds", fontsize=16, color='black')
+    ax2.set_ylabel("Days", fontsize=16, color='green')
+
+    ax1.set_xticks(x)
+    ax1.set_xticklabels([f"{row.Date.strftime('%Y-%m-%d')}\n({row.Type})" for index, row in df.iterrows()], fontsize=12, rotation='horizontal')
+
+    for i, (index, row) in enumerate(df.iterrows()):
+        ax1.annotate(row["Array Context Type"].split("(")[0], (i, max(row["CNS(2s)"], row["Mix"]) + 10), ha='center', va='bottom', fontsize=10)
+
+    ax1.legend(fontsize=12)
+    ax2.legend(fontsize=12, loc='upper left')
+    ax1.set_title(title, fontsize=18)
+
+    plt.tight_layout()
+    plt.show()
+
+# Plotting both requested charts with corrections
+plot_performance_corrected(df_updated, "Gas-Only ACTII Flowthrough with All Data Points", include_eager=True)
+plot_performance_corrected(df_updated, "Gas-Only ACTII Flowthrough without Eager Context", include_eager=False)

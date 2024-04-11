@@ -1,0 +1,143 @@
+\documentclass[aspectratio=169]{beamer}
+
+\input{../ceesd-macros.tex}
+\usepackage{wrapfig}
+\usepackage{caption}
+\usepackage{subcaption}
+\newif\ifmovies
+\moviestrue
+%\moviesfalse
+
+\newif\ifsubs
+\substrue
+%\subsfalse
+
+\usepackage{pdfpages}
+\newif\ifppt
+\ppttrue
+%\pptfalse
+
+\newif\ifnotes
+\notestrue
+%\notesfalse
+
+\usepackage[absolute,overlay]{textpos}
+
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{9} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{9}  % for normal
+
+\usepackage{color}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+
+\newcommand{\parsl}{{\it Parsl\ }}
+\usepackage{listings}
+
+\newcommand\pythonstyle{\lstset{
+    language=Python,
+    basicstyle=\ttm,
+    morekeywords={self},              % Add keywords here
+    keywordstyle=\ttb\color{deepblue},
+    commentstyle=\color{deepgreen},
+    emph={mpirun,remote_run,Endpoint},          % Custom highlighting
+    emphstyle=\ttb\color{deepred},    % Custom highlighting style
+    stringstyle=\color{deepgreen},
+    % Any extra options here
+    showstringspaces=false
+}}
+
+
+% AK Additions
+\AtBeginSubsection[] {
+  \begin{frame}[shrink]{Outline}
+    \linespread{0.8}
+    \tableofcontents[sectionstyle=show/shaded,subsectionstyle=show/shaded/hide]
+  \end{frame}
+}
+\usepackage{minted}
+\usetikzlibrary{fit}
+\usetikzlibrary{shadows}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes.arrows}
+\def\evalprint#1{{\pgfmathtruncatemacro{\mathresult}{#1}\mathresult}}
+\def\credit#1{{\scriptsize[#1]}}
+\let\b=\boldsymbol
+\setbeamercolor{alerted text}{fg=IllinoisOrange}
+\usepackage{listings}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{akcodestyle}{
+    basicstyle=\small,
+    backgroundcolor=\color{gray!20},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    columns=flexible
+}
+
+\def\didit#1{\prj{\tiny}{#1}}
+\def\software#1{\textit{#1}}
+\def\good#1{\textcolor{green!50!black}{#1}}
+\def\okay#1{\textcolor{green!25!gray}{#1}}
+\def\notideal#1{\textcolor{IllinoisOrange}{#1}}
+\def\bad#1{\textcolor{red}{#1}}
+\def\future{\textcolor{blue}{Future work:}}
+\def\progress#1{\okay{In Progress:}}
+\def\draft#1{\okay{Draft Available:}}
+\def\completed{\good{Completed:}}
+% End AK Additions
+
+% Python environment
+\lstnewenvironment{python}[1][]
+{
+  \pythonstyle
+  \lstset{#1}
+}
+{}
+
+\begin{document}
+
+
+%======================================================================
+\begin{frame}\frametitle{}
+
+\vspace*{0.2in}
+
+\hspace*{0.0in}\textrm{{\huge\bfseries\color{myOrange} MixItUp-2024-04-12}}
+
+
+\vspace*{0.1in}
+\hfill\cPI{Nick Koskelo} \rPI{(CS)}\\
+\hfill\cPI{M.~Campbell} \rPI{(NCSA)}\\
+
+\end{frame}
+%======================================================================
+
+
+
+%======================================================================
+\sectionAndsubWithFrame{\ceesdcode{} Status, Challenges \& Next Steps}{(Nick Koskelo)}
+
+\ifsubs
+\input{subtalk-campbell.tex}
+\fi
+
+%======================================================================
+\sectionAndsubWithFrame{Overlapping Communication \& Computation in MIRGE}{(M.~Campbell)}
+
+\ifsubs
+\input{subtalk-koskelo.tex}
+\fi
+
+
+\input{../ceesd-acknowledgement.tex}
+
+
+\end{document}
+
+
