@@ -257,11 +257,12 @@ https://github.com/illinois-ceesd/timing\\
           \item Where are the \texttt{temperature} evals in fluid RHS?:
           \begin{itemize}
           \item myRHS: $1\times$ volume
-          \item MOS: $1\times$ quad vol, $1\times$ per BC, $2\times$ per IEB ($\text{state}^{\pm}$)
-          \item $\nabla{T}$, $\nabla{\text{CV}}$: $\le1\times$ per BC
-          \item CNS: $\le1\times$ per \{inv, visc\} BC
-          \item Untracked: $\le1$ superfluous?
+          \item MOS: $1\times$ quad, $1\times$ per BC ($\text{state}^{-}$), $2\times$ per IEB ($\text{state}^{\pm}$)
+          \item $\nabla{T}$, $\nabla{\text{CV}}$: $\le1\times$ per BC ($\text{state}^+$)
+          \item CNS: $\le1\times$ per \{inv, visc\} BC ($\text{state}^+$)
+          \item Untracked: $\sim1$ superfluous calls?
           \end{itemize}
+          \item Worse news: BC $\text{state}^+$ splat can't be eliminated
         \end{itemize}
         %\vspace{10pt}
         %\centering
@@ -271,6 +272,8 @@ https://github.com/illinois-ceesd/timing\\
 
     \begin{column}{0.48\textwidth}
         \centering
+        \textbf{DAG Counts for KS3D: Gas-only, 7sp}\\
+        \vspace{3pt}
         \begin{tabularx}{\textwidth}{|X|X|X|X|X|}
             \hline
             \textbf{Newton} & \textbf{MFS} & \textbf{RHS} & \textbf{Cmp(s)} \\ \hline
@@ -295,8 +298,8 @@ https://github.com/illinois-ceesd/timing\\
 \item First: Eliminate DAG splat with extreme prejudice
 \begin{itemize}
 \item Matt is closing in on done with function outlining
-\item Mike will eliminate extra temperature evaluations where possible
-\item Probably OK to back-burner ``temperature splat''
+\item Mike will eliminate extra temperature evaluations by refactoring
+\item ``temperature splat'' not very impactful for 7sp, less urgent
 \end{itemize}
 \item Next: Detailed performance studies
 \begin{itemize}
