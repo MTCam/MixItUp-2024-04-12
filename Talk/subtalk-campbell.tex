@@ -55,9 +55,20 @@
 \begin{minipage}[T]{0.45\textwidth}
   \begin{itemize}
     \setlength{\itemsep}{0.2in}
-    \item Current \ceesdcode{} Performance 
+    \item Current \ceesdcode{} Performance
+    \begin{itemize}
+    \item Substantial improvement over time
+    \item Good enough for (Y3) prediction
+    \item Not good enough
+    \end{itemize}
     \item Performance Challenge
+    \begin{itemize}
+    \item Clear \& present hurdle to exascale
+    \end{itemize}
     \item Next Steps
+    \begin{itemize}
+    \item What can we do about it?
+    \end{itemize}
   \end{itemize}
 \end{minipage}
 \hfill
@@ -86,6 +97,7 @@ https://github.com/illinois-ceesd/timing\\
 \end{frame}
 
 
+
 %\begin{frame}\frametitle{Lifetime Performance Monitoring}
 %\centering
 %\includegraphics[width=.8\textwidth]{Figures/mtc/gas-only-perf-eager.pdf}
@@ -94,6 +106,16 @@ https://github.com/illinois-ceesd/timing\\
 \begin{frame}\frametitle{Lifetime Performance Monitoring}
 \centering
 \includegraphics[width=.8\textwidth]{Figures/mtc/gas-only-perf.pdf}
+\end{frame}
+
+\begin{frame}\frametitle{Recent Weak Scaling from Nightly KS3D on Lassen}
+\begin{center}
+  \includegraphics[width=.6\textwidth]{Figures/mtc/NightlyWeak.pdf}
+  \includegraphics[width=.6\textwidth]{Figures/mtc/weak_scaling_NightlyWeak.pdf}
+%\begin{itemize}
+%\item KS3D: Prediction physics, 24k $p=4$ Tets / MPI rank
+%\end{itemize}
+\end{center}
 \end{frame}
 
 \begin{frame}\frametitle{Lassen DATs for Testing at Scale}
@@ -131,16 +153,6 @@ https://github.com/illinois-ceesd/timing\\
   \item Compile and per-step timings for Fluid-only, Artificial Viscosity (AV), and Fluid-Wall-AV 
   \end{itemize}
   \end{center}
-\end{frame}
-
-\begin{frame}\frametitle{Recent Weak Scaling from Nightly KS3D on Lassen}
-\begin{center}
-  \includegraphics[width=.6\textwidth]{Figures/mtc/NightlyWeak.pdf}
-  \includegraphics[width=.6\textwidth]{Figures/mtc/weak_scaling_NightlyWeak.pdf}
-%\begin{itemize}
-%\item KS3D: Prediction physics, 24k $p=4$ Tets / MPI rank
-%\end{itemize}
-\end{center}
 \end{frame}
 
 \begin{frame}
