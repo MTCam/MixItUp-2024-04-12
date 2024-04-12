@@ -81,22 +81,20 @@
 \end{frame}
 
 
-\begin{frame}\frametitle{Performance Monitoring on Lassen}
-\begin{center}
-https://github.com/illinois-ceesd/timing\\
-%\includegraphics[width=.6\textwidth]{Figures/mtc/nozzle-lazy-full.pdf}
-\includegraphics[width=.6\textwidth]{Figures/mtc/big_nozzle_timing_history.pdf}
-\end{center}
-\end{frame}
+%\begin{frame}\frametitle{Performance Monitoring on Lassen}
+%\begin{center}
+%https://github.com/illinois-ceesd/timing\\
+%%\includegraphics[width=.6\textwidth]{Figures/mtc/nozzle-lazy-full.pdf}
+%\includegraphics[width=.6\textwidth]{Figures/mtc/big_nozzle_timing_history.pdf}
+%\end{center}
+%\end{frame}
 
 
-\begin{frame}\frametitle{Recent: Persistent Caching of Compiled Kernels}
-\begin{center}
-  \includegraphics[width=.7\textwidth]{Figures/mtc/y3-recent-cached_1.pdf}
-\end{center}
-\end{frame}
-
-
+%\begin{frame}\frametitle{Recent: Persistent Caching of Compiled Kernels}
+%\begin{center}
+%  \includegraphics[width=.7\textwidth]{Figures/mtc/y3-recent-cached_1.pdf}
+%\end{center}
+%\end{frame}
 
 %\begin{frame}\frametitle{Lifetime Performance Monitoring}
 %\centering
@@ -118,18 +116,18 @@ https://github.com/illinois-ceesd/timing\\
 \end{center}
 \end{frame}
 
-\begin{frame}\frametitle{Lassen DATs for Testing at Scale}
-  \begin{itemize}
-  \item Current performance supports prediction-scale simulation
-  \item Dedicated Application Time (DAT) for prediction last Fall 
-  \item Large portion of Lassen:
-    \begin{itemize}
-    \item 512 / 600(ish) available nodes
-    \item 4$\times$NVIDIA Volta (V100) GPUs / node
-    \item 256GB of host RAM, 16GB per GPU, Unified mem
-    \end{itemize}
-  \end{itemize}
-\end{frame}
+%\begin{frame}\frametitle{Lassen DATs for Testing at Scale}
+%  \begin{itemize}
+%  \item Current performance supports prediction-scale simulation
+%  \item Dedicated Application Time (DAT) for prediction last Fall 
+%  \item Large portion of Lassen:
+%    \begin{itemize}
+%    \item 512 / 600(ish) available nodes
+%    \item 4$\times$NVIDIA Volta (V100) GPUs / node
+%    \item 256GB of host RAM, 16GB per GPU, Unified mem
+%    \end{itemize}
+%  \end{itemize}
+%\end{frame}
 
 \begin{frame}\frametitle{Scalability Data from Lassen DAT}
     \begin{columns}[T]  % [T] is for top vertical alignment
@@ -162,67 +160,67 @@ https://github.com/illinois-ceesd/timing\\
     Challenges To Performance
 \end{frame}
 
-\begin{frame}\frametitle{Recall: DAG Splat Effect}
-\vspace{5pt}
-  \begin{minipage}{0.49\textwidth}		
-    \begin{itemize}
-    \item Unexpected DAG scaling vs. MPI ranks
-    \item DAG \textit{splat}: function DAG inlining:
-    \begin{itemize}
-    \item Flux: BCs \& Interior boundaries (IEB)
-    \item Temperature: Newton iterations
-    %\item Function \texttt{make\_fluid\_state} (MFS)
-    %\item Dependent vars (DV): Newton iters
-    %\item BCs \& Interior boundaries (IEB)
-    \end{itemize}
-    \item 1D part: Particle board $\rightarrow$ pancakes
-    \end{itemize}
-    \begin{center}
-    \includegraphics[width=.8\textwidth]{Figures/mtc/combozzle_weak_bad_partitioning.png}
-    \end{center}
-  \end{minipage}
-  \begin{minipage}{0.49\textwidth}
-    %\begin{figure}
-      \centering
-      \includegraphics[width=.8\textwidth]{Figures/mtc/MetisTo1D.png} \\
-      \vspace{10pt}
-    \includegraphics[width=.8\textwidth]{Figures/mtc/y3-prediction_weak_scaling.pdf}
-    %\end{figure}		
-  \end{minipage}
-\end{frame}
+%\begin{frame}\frametitle{Recall: DAG Splat Effect}
+%\vspace{5pt}
+%  \begin{minipage}{0.49\textwidth}		
+%    \begin{itemize}
+%    \item Unexpected DAG scaling vs. MPI ranks
+%    \item DAG \textit{splat}: function DAG inlining:
+%    \begin{itemize}
+%    \item Flux: BCs \& Interior boundaries (IEB)
+%    \item Temperature: Newton iterations
+%    %\item Function \texttt{make\_fluid\_state} (MFS)
+%    %\item Dependent vars (DV): Newton iters
+%    %\item BCs \& Interior boundaries (IEB)
+%    \end{itemize}
+%    \item 1D part: Particle board $\rightarrow$ pancakes
+%    \end{itemize}
+%    \begin{center}
+%    \includegraphics[width=.8\textwidth]{Figures/mtc/combozzle_weak_bad_partitioning.png}
+%    \end{center}
+%  \end{minipage}
+%  \begin{minipage}{0.49\textwidth}
+%    %\begin{figure}
+%      \centering
+%      \includegraphics[width=.8\textwidth]{Figures/mtc/MetisTo1D.png} \\
+%      \vspace{10pt}
+%    \includegraphics[width=.8\textwidth]{Figures/mtc/y3-prediction_weak_scaling.pdf}
+%    %\end{figure}		
+%  \end{minipage}
+%\end{frame}
 
 
-\begin{frame}\frametitle{DAG Splat Rises Again: No Surprises}
-    \begin{columns}[T]  % [T] is for top vertical alignment
-    % Left Column
-    \begin{column}{0.5\textwidth}
-      % Top left: Text
-      \begin{itemize}
-      \item DAG Splat is the culprit for full machine scaling fail
-      \item 1D Partitioning fails spectacularly at scale
-      \item Pancakes $\rightarrow$ waffles
-      \item Material-material interfaces contribute significantly to DAG
-      \end{itemize}
-      \vspace{20pt}
-      \hspace{20pt}
-      \includegraphics[width=.7\textwidth]{Figures/mtc/compile_times_dag_nodes.png}
-    \end{column}
-    
-    % Right Column
-    \begin{column}{0.5\textwidth}
-      \vspace{-15pt}
-      \hspace{20pt}
-      % Top right: Startup Times
-      \includegraphics[width=.4\textwidth]{Figures/mtc/BadPartitioning2.png}
-      \includegraphics[width=.4\textwidth]{Figures/mtc/BadPartitioning.png}
-      % Bottom right: Simulation Step Times
-      \vfill
-      \vspace{10pt}
-      \hspace{20pt}
-      \includegraphics[width=.7\textwidth]{Figures/mtc/dag_nodes_rank_nbrs.png}
-    \end{column}
-  \end{columns}
-\end{frame}
+%\begin{frame}\frametitle{DAG Splat Rises Again: No Surprises}
+%    \begin{columns}[T]  % [T] is for top vertical alignment
+%    % Left Column
+%    \begin{column}{0.5\textwidth}
+%      % Top left: Text
+%      \begin{itemize}
+%      \item DAG Splat is the culprit for full machine scaling fail
+%      \item 1D Partitioning fails spectacularly at scale
+%      \item Pancakes $\rightarrow$ waffles
+%      \item Material-material interfaces contribute significantly to DAG
+%      \end{itemize}
+%      \vspace{20pt}
+%      \hspace{20pt}
+%      \includegraphics[width=.7\textwidth]{Figures/mtc/compile_times_dag_nodes.png}
+%    \end{column}
+%    
+%    % Right Column
+%    \begin{column}{0.5\textwidth}
+%      \vspace{-15pt}
+%      \hspace{20pt}
+%      % Top right: Startup Times
+%      \includegraphics[width=.4\textwidth]{Figures/mtc/BadPartitioning2.png}
+%      \includegraphics[width=.4\textwidth]{Figures/mtc/BadPartitioning.png}
+%      % Bottom right: Simulation Step Times
+%      \vfill
+%      \vspace{10pt}
+%      \hspace{20pt}
+%      \includegraphics[width=.7\textwidth]{Figures/mtc/dag_nodes_rank_nbrs.png}
+%    \end{column}
+%  \end{columns}
+%\end{frame}
 
 \begin{frame}\frametitle{What Makes Prediction DAGs So Big?}
 \begin{columns}[T, onlytextwidth] % Aligns contents at the top
@@ -313,8 +311,8 @@ https://github.com/illinois-ceesd/timing\\
 \item First: Eliminate DAG splat with extreme prejudice
 \begin{itemize}
 \item Matt is closing in on done with function outlining
-\item Mike will eliminate extra temperature evaluations by refactoring
-\item ``temperature splat'' not very impactful for 7sp, less urgent
+\item MikeC will eliminate extra temperature evaluations by refactoring
+\item ``temperature splat'' (Newton iters) not very impactful for 7sp, less urgent
 \end{itemize}
 \item Next: Detailed performance studies
 \begin{itemize}
