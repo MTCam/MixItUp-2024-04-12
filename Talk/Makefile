@@ -12,7 +12,7 @@ SUBTALKS := $(shell ls subtalk-*.tex) ../ceesd-acknowledgement.tex ../ceesd-macr
 
 all-redirect: $(BASENAME).pdf
 
-talk-$(BASENAME).pdf: $(BASENAME).tex $(SUBTALKS) $(FIGURES)
+$(BASENAME).pdf: $(BASENAME).tex $(SUBTALKS) $(FIGURES)
 
 clean:
 	rm -fr _mint* *.vrb *.tex~ *.toc *.aux *.log *.nav *.out *.snm *.flc

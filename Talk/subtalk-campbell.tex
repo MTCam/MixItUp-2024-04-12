@@ -51,15 +51,11 @@
     escapeinside=@@
 }
 
-%\newcommand{\softwaredeps}{
-%  \input{./Figures/software.tikz}
-%}
-
 \begin{frame}\frametitle{Outline}
 \begin{minipage}[T]{0.45\textwidth}
   \begin{itemize}
     \setlength{\itemsep}{0.2in}
-    \item Current Performance 
+    \item Current \ceesdcode{} Performance 
     \item Performance Challenge
     \item Next Steps
   \end{itemize}
@@ -90,10 +86,10 @@ https://github.com/illinois-ceesd/timing\\
 \end{frame}
 
 
-\begin{frame}\frametitle{Lifetime Performance Monitoring}
-\centering
-\includegraphics[width=.8\textwidth]{Figures/mtc/gas-only-perf-eager.pdf}
-\end{frame}
+%\begin{frame}\frametitle{Lifetime Performance Monitoring}
+%\centering
+%\includegraphics[width=.8\textwidth]{Figures/mtc/gas-only-perf-eager.pdf}
+%\end{frame}
 
 \begin{frame}\frametitle{Lifetime Performance Monitoring}
 \centering
@@ -101,14 +97,12 @@ https://github.com/illinois-ceesd/timing\\
 \end{frame}
 
 \begin{frame}\frametitle{Lassen DATs for Testing at Scale}
-\begin{center}
-New: Actual prediction physics at scale \prj{\tiny}{M.~Anderson}
-\end{center}
   \begin{itemize}
-  \item Dedicated Application Time (DAT) last Fall
+  \item Current performance supports prediction-scale simulation
+  \item Dedicated Application Time (DAT) for prediction last Fall 
   \item Large portion of Lassen:
     \begin{itemize}
-    \item 600(ish) available nodes
+    \item 512 / 600(ish) available nodes
     \item 4$\times$NVIDIA Volta (V100) GPUs / node
     \item 256GB of host RAM, 16GB per GPU, Unified mem
     \end{itemize}
@@ -131,6 +125,22 @@ New: Actual prediction physics at scale \prj{\tiny}{M.~Anderson}
     \end{column}
 
   \end{columns}
+  \begin{center}
+  \begin{itemize}
+  \item Prediction geometry, weak scaling with 24k $p=4$ Tets per MPI rank
+  \item Compile and per-step timings for Fluid-only, Artificial Viscosity (AV), and Fluid-Wall-AV 
+  \end{itemize}
+  \end{center}
+\end{frame}
+
+\begin{frame}\frametitle{Recent Weak Scaling from Nightly KS3D on Lassen}
+\begin{center}
+  \includegraphics[width=.6\textwidth]{Figures/mtc/NightlyWeak.pdf}
+  \includegraphics[width=.6\textwidth]{Figures/mtc/weak_scaling_NightlyWeak.pdf}
+%\begin{itemize}
+%\item KS3D: Prediction physics, 24k $p=4$ Tets / MPI rank
+%\end{itemize}
+\end{center}
 \end{frame}
 
 \begin{frame}
@@ -236,6 +246,43 @@ New: Actual prediction physics at scale \prj{\tiny}{M.~Anderson}
 
 \end{frame}
 
+\begin{frame}\frametitle{Big DAG Part 2: Why So Many DV Evaluations?}
+\begin{columns}[T, onlytextwidth] % Aligns contents at the top
+    \begin{column}{0.48\textwidth}
+        \begin{itemize}
+          \item Good news: Only $332$ nodes per Newton iter (7sp)
+          \item Bad news: $>8\times$\texttt{temperature} per RHS
+          \item MFS performs the \texttt{temperature} evals
+          \item \texttt{make\_operator\_states} (MOS) is only \textit{partly} responsible
+          \item Where are the \texttt{temperature} evals in fluid RHS?:
+          \begin{itemize}
+          \item myRHS: $1\times$ volume
+          \item MOS: $1\times$ quad vol, $1\times$ per BC, $2\times$ per IEB ($\text{state}^{\pm}$)
+          \item $\nabla{T}$, $\nabla{\text{CV}}$: $\le1\times$ per BC
+          \item CNS: $\le1\times$ per \{inv, visc\} BC
+          \item Untracked: $\le1$ superfluous?
+          \end{itemize}
+        \end{itemize}
+        %\vspace{10pt}
+        %\centering
+        %\includegraphics[width=.8\textwidth]{Figures/mtc/prediction_dag_table.png}
+        %\includegraphics[width=\textwidth]{Figures/mtc/prediction_features_dag.pdf}
+    \end{column}
+
+    \begin{column}{0.48\textwidth}
+        \centering
+        \begin{tabularx}{\textwidth}{|X|X|X|X|X|}
+            \hline
+            \textbf{Newton} & \textbf{MFS} & \textbf{RHS} & \textbf{Cmp(s)} \\ \hline
+            1 & 735 & 10729 & 433 \\ \hline
+            2 & 1067 & 13385 & 466 \\ \hline
+            3 & 1399 & 16041 & 499 \\ \hline
+        \end{tabularx}        
+    \end{column}
+\end{columns}
+
+\end{frame}
+
 \begin{frame}
     \centering
     \Large
@@ -244,41 +291,25 @@ New: Actual prediction physics at scale \prj{\tiny}{M.~Anderson}
 
 \begin{frame}\frametitle{Summary and Next Steps}
 \begin{itemize}
-\item \mirgecom{} has prediction-supporting performance (poised to deliver more)
-\item Next focus: understanding and improving \mirgecom{} performance
-\end{itemize}
-\begin{center}
-Next steps
-\end{center}
-\begin{multicols}{2}
+\item \mirgecom{} has prediction-supporting performance, but we aren't satisfied
+\item First: Eliminate DAG splat with extreme prejudice
 \begin{itemize}
-\item Understanding and improving performance:
+\item Matt is closing in on done with function outlining
+\item Mike will eliminate extra temperature evaluations where possible
+\item Probably OK to back-burner ``temperature splat''
+\end{itemize}
+\item Next: Detailed performance studies
 \begin{itemize}
-\item Instrumentation (Mem \& Tags) \prj{\tiny}{M.~Diener}
-\item Code-to-kernel correspondence improvements: \prj{\tiny}{M.~Diener}
-\item Auto-tuning, flop monitoring \prj{\tiny}{Nick Christensen}
-\item DAG Splat \prj{\tiny}{M. Smith, Kl\"ockner}
-% \item Performance:
-%\begin{itemize}
-\item More platforms: Tioga, Delta, ...
-\item Modeling and benchmarks (bake-off)
-%\end{itemize}
-\end{itemize}
-\columnbreak
-\item Imminent enhancements:
+\item DG bakeoff: Scalar advection diffusion?
 \begin{itemize}
-\item More verification: mixture and boundary conditions
-\item Workflow management: \textit{Parsl} \prj{\tiny}{D.~Friedel}
-  \begin{itemize}
-  \item For interplatform testing \& timing
-  \item UQ \prj{\tiny}{K.~Tang}
-  \item Prediction
-  \end{itemize}
-\item Tensor product elements (Hexes) \prj{\tiny}{Addison Alvey-Blanco, M.~Anderson, T.~Ricciardi}
-%\item M-to-N restart (done!)
+\item Admits analytic exact solution
+\item Exercises non-trivial operators essential to most conservation systems
+\item Can craft performance model with relative ease
+\end{itemize}
+\item Evaluate on varied platforms: Tioga@LC, Delta@NCSA, Aurora@ANL
 \end{itemize}
 \end{itemize}
-\end{multicols}
+%\end{multicols}
 \end{frame}
 
 % NO
@@ -652,4 +683,78 @@ Next steps
 %\includegraphics[width=.48\textwidth]{Figures/mtc/y2-prediction_weak_scaling.pdf}
 %\includegraphics[width=.48\textwidth]{Figures/mtc/y3-prediction_weak_scaling.pdf}
 %\end{minipage}
+%\end{frame}
+
+
+%\newcommand{\softwaredeps}{
+%  \input{./Figures/software.tikz}
+%}
+
+%\begin{frame}\frametitle{Flowchart Example}
+%
+%% Define styles for the flowchart
+%\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw%=black, fill=red!30]
+%\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, minimum he%ight=1cm, text centered, draw=black, fill=blue!30]
+%\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=orang%e!30]
+%\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!%30]
+%\tikzstyle{arrow} = [thick,->,>=stealth]
+%% Draw the flowchart
+%\begin{tikzpicture}[node distance=2cm]
+%
+%\node (start) [startstop] {Start};
+%\node (in1) [io, below of=start] {Input};
+%\node (pro1) [process, below of=in1] {Process 1};
+%\node (dec1) [decision, below of=pro1] {Decision 1};
+%\node (pro2a) [process, left of=dec1, xshift=-2cm] {Process 2a};
+%\node (pro2b) [process, right of=dec1, xshift=2cm] {Process 2b};
+%\node (out1) [io, below of=dec1] {Output};
+%\node (stop) [startstop, below of=out1] {Stop};
+%
+%\draw [arrow] (start) -- (in1);
+%\draw [arrow] (in1) -- (pro1);
+%\draw [arrow] (pro1) -- (dec1);
+%\draw [arrow] (dec1) -- node[anchor=east] {yes} (pro2a);
+%\draw [arrow] (dec1) -- node[anchor=west] {no} (pro2b);
+%\draw [arrow] (pro2a) |- (out1);
+%\draw [arrow] (pro2b) |- (out1);
+%\draw [arrow] (out1) -- (stop);
+%
+%\end{tikzpicture}
+%\end{frame}
+%\begin{frame}\frametitle{Flowchart 1}
+%\begin{tikzpicture}[
+%    % Define arrow style
+%    arr/.style={-Stealth, thick},
+%    % Define box styles
+%    source/.style={draw, rounded corners, fill=blue!20, align=center, minimum height=2em},
+%    process/.style={draw, rounded corners, fill=orange!30, align=center, minimum height=2em},
+%    file/.style={draw, tape, tape bend top=none, fill=blue!20, align=center, minimum height=2em},
+%    database/.style={draw, cylinder, shape border rotate=90, aspect=0.25, fill=blue!20, align=center, minimum %height=2em}
+%]
+
+%% Place nodes
+%\node[source] (sms) {Serial Mesh\\Source\\(gmsh, meshmode)};
+%\node[file, below=0.5cm of sms] (nrestart) {N restart\\pkl files};
+%\node[process, right=1cm of nrestart] (meshdist) {meshdist};
+%\node[process, right=1cm of meshdist] (mirgecom) {MIRGE-Com\\(M-ranks)};
+%\node[file, below=0.5cm of mirgecom] (mrestart) {M restart\\pkl files};
+%\node[process, left=1cm of mrestart] (redist) {redist};
+%\node[file, left=1cm of redist] (nviz) {N viz vtk files};
+%\node[database, below=0.5cm of nrestart] (vizproc) {Visualization\\Processing};
+%
+% Connect nodes with arrows
+%\draw[arr] (sms) -- (nrestart);
+%\draw[arr] (nrestart) -- (meshdist);
+%\draw[arr] (meshdist) -- (mirgecom);
+%\draw[arr] (mirgecom) -- (mrestart);
+%\draw[arr] (mrestart) -- (redist);
+%\draw[arr] (redist) -- (nviz);
+%\draw[arr] (nviz) -- (vizproc);
+%\draw[arr] (nrestart.south) -- ++(0,-0.5) -| (vizproc);
+%\draw[arr] (redist.south) -- ++(0,-0.5) -| (meshdist);
+%
+%% Add more nodes and connections as necessary to match the provided flowchart
+%
+%\end{tikzpicture}
+%
 %\end{frame}
