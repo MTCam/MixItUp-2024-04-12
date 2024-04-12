@@ -262,8 +262,9 @@ https://github.com/illinois-ceesd/timing\\
 \begin{columns}[T, onlytextwidth] % Aligns contents at the top
     \begin{column}{0.48\textwidth}
         \begin{itemize}
-          \item Good news: Only $332$ nodes per Newton iter (7sp)
-          \item Bad news: $>8\times$\texttt{temperature} per RHS
+          \item Good: Only $332$ nodes per Newton(7sp)
+          \item Bad: $>8\times$\texttt{temperature} per RHS
+          \begin{itemize}
           \item MFS performs the \texttt{temperature} evals
           \item \texttt{make\_operator\_states} (MOS) is only \textit{partly} responsible
           \item Where are the \texttt{temperature} evals in fluid RHS?:
@@ -274,15 +275,16 @@ https://github.com/illinois-ceesd/timing\\
           \item CNS: $\le1\times$ per \{inv, visc\} BC ($\text{state}^+$)
           \item Untracked: $\sim1$ superfluous calls?
           \end{itemize}
-          \item Worse news: BC $\text{state}^+$ splat can't be eliminated
+          \end{itemize}
+          \item Worse: BC $\text{state}^+$ splat can't be eliminated (completely)
         \end{itemize}
         %\vspace{10pt}
         %\centering
         %\includegraphics[width=.8\textwidth]{Figures/mtc/prediction_dag_table.png}
         %\includegraphics[width=\textwidth]{Figures/mtc/prediction_features_dag.pdf}
     \end{column}
-
     \begin{column}{0.48\textwidth}
+        \vspace{40pt}
         \centering
         \textbf{DAG Counts for KS3D: Gas-only, 7sp}\\
         \vspace{3pt}
